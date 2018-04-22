@@ -9,7 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  logging: 0.11.3
+  logging: 0.11.3+1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
