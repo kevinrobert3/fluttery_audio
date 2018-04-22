@@ -23,6 +23,7 @@ class AudioPlayer {
   Duration _audioLength;
   int _bufferedPercent;
   Duration _position;
+  bool _isSeeking;
 
   AudioPlayer({
     this.playerId,
@@ -123,14 +124,10 @@ class AudioPlayer {
           }
           break;
         case "onSeekStarted":
-          for (Function callback in _onSeekStarteds) {
-            callback();
-          }
+          _setIsSeeking(true);
           break;
         case "onSeekCompleted":
-          for (Function callback in _onSeekCompleteds) {
-            callback();
-          }
+          _setIsSeeking(false);
           break;
       }
     });
@@ -151,7 +148,7 @@ class AudioPlayer {
     _onSeekCompleteds.clear();
   }
 
-  get state => _state;
+  AudioPlayerState get state => _state;
 
   _setState(AudioPlayerState state) {
     _state = state;
@@ -165,7 +162,7 @@ class AudioPlayer {
   ///
   /// Accessing [audioLength] is only valid after the [AudioPlayer] has loaded
   /// an audio clip and before the [AudioPlayer] is stopped.
-  get audioLength => _audioLength;
+  Duration get audioLength => _audioLength;
 
   _setAudioLength(Duration audioLength) {
     _audioLength = audioLength;
@@ -175,7 +172,7 @@ class AudioPlayer {
     }
   }
 
-  get bufferedPercent => _bufferedPercent;
+  int get bufferedPercent => _bufferedPercent;
 
   _setBufferedPercent(int percent) {
     _bufferedPercent = percent;
@@ -189,13 +186,29 @@ class AudioPlayer {
   ///
   /// Accessing [position] is only valid after the [AudioPlayer] has loaded
   /// an audio clip and before the [AudioPlayer] is stopped.
-  get position => _position;
+  Duration get position => _position;
 
   _setPosition(Duration position) {
     _position = position;
 
     for (Function callback in _onPlayerPositionChangeds) {
       callback(position);
+    }
+  }
+
+  bool get isSeeking => _isSeeking;
+
+  _setIsSeeking(bool isSeeking) {
+    _isSeeking = isSeeking;
+
+    if (_isSeeking) {
+      for (Function callback in _onSeekStarteds) {
+        callback(position);
+      }
+    } else {
+      for (Function callback in _onSeekCompleteds) {
+        callback(position);
+      }
     }
   }
 
