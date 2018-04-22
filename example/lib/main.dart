@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttery_audio/fluttery_audio.dart';
+import 'package:fluttery_audio_example/declarative_audio_example.dart';
+import 'package:logging/logging.dart';
 
-void main() => runApp(new MyApp());
+const SOUNDCLOUD_ID_ELECTRO_MONOTONY = "266891990";
+const SOUNDCLOUD_ID_DEBUT_TRANCE = "260578593";
+const SOUNDCLOUD_ID_DEBUT = "258735531";
+const SOUNDCLOUD_ID_MASTERS_TRANCE = "9540779";
+const SOUNDCLOUD_ID_MASTERS_TRIBAL = "9540352";
+const SOUNDCLOUD_OTHER = "295692063";
+const STREAM_URL = "https://api.soundcloud.com/tracks/" + SOUNDCLOUD_ID_DEBUT_TRANCE +"/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P";
+
+void main() {
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((LogRecord rec) {
+    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+  });
+
+  runApp(new MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -10,44 +25,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
-  @override
-  initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await FlutteryAudio.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted)
-      return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       home: new Scaffold(
         appBar: new AppBar(
-          title: new Text('Plugin example app'),
+          title: new Text('Fluttery Audio'),
         ),
         body: new Center(
-          child: new Text('Running on: $_platformVersion\n'),
+//          child: new DeclarativeAudioSimpleExample(
+//            audioUrl: STREAM_URL,
+//          ),
+          child: new DeclarativeAudioComponentsExample(
+            audioUrl: STREAM_URL,
+          ),
+//          child: new ImperativeAudioExample(
+//            audioUrl: STREAM_URL,
+//          ),
         ),
       ),
     );

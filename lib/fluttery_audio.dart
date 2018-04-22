@@ -1,13 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:fluttery_audio/src/_audio_player.dart';
+
+export 'src/_audio_player.dart';
+export 'src/_audio_player_widgets.dart';
 
 class FlutteryAudio {
   static const MethodChannel _channel =
       const MethodChannel('fluttery_audio');
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
+  static AudioPlayer audioPlayer() {
+    return new AudioPlayer(
+      playerId: 'demo_player',
+      channel: _channel,
+    );
   }
 }

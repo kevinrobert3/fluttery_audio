@@ -1,12 +1,15 @@
 name: fluttery_audio
 description: Flutter plugin for playing audio files and streams
 version: 0.0.1
-author:
-homepage:
+author: Matthew Carroll
+homepage: https://github.com/matthew-carroll/fluttery_audio
+email: fluttery.io@gmail.com
 
 dependencies:
   flutter:
     sdk: flutter
+
+  logging: 0.11.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
