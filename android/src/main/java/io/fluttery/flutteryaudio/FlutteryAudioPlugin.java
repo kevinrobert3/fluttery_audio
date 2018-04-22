@@ -37,7 +37,7 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
   private AudioPlayer player; // TODO: support multiple players.
 
   public FlutteryAudioPlugin() {
-    MediaPlayer mediaPlayer = new MediaPlayer();
+    final MediaPlayer mediaPlayer = new MediaPlayer();
     player = new AudioPlayer(mediaPlayer);
 
     player.addListener(new AudioPlayer.Listener() {
@@ -94,7 +94,18 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
       @Override
       public void onSeekCompleted() {
-        channel.invokeMethod("onSeekCompleted", null);
+        // We send the new seek position over the channel with the
+        // onSeekCompleted call because clients will likely need to
+        // know immediately after seeking what the position is. If we
+        // don't send that information with this call then a client will
+        // have to call back and ask, and due to the asynchronous nature
+        // of channels, there will be a noticeable time gap between when
+        // seeking ends and when clients are able to synchronize with the
+        // new playback position which will lead to visual artifacts in the UI.
+        Map<String, Object> args = new HashMap<>();
+        args.put("position", player.playbackPosition());
+        
+        channel.invokeMethod("onSeekCompleted", args);
       }
     });
   }

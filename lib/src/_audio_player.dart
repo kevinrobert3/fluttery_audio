@@ -23,7 +23,7 @@ class AudioPlayer {
   Duration _audioLength;
   int _bufferedPercent;
   Duration _position;
-  bool _isSeeking;
+  bool _isSeeking = false;
 
   AudioPlayer({
     this.playerId,
@@ -127,6 +127,7 @@ class AudioPlayer {
           _setIsSeeking(true);
           break;
         case "onSeekCompleted":
+          _setPosition(new Duration(milliseconds: call.arguments['position']));
           _setIsSeeking(false);
           break;
       }
@@ -199,15 +200,19 @@ class AudioPlayer {
   bool get isSeeking => _isSeeking;
 
   _setIsSeeking(bool isSeeking) {
+    if (isSeeking == _isSeeking) {
+      return;
+    }
+
     _isSeeking = isSeeking;
 
     if (_isSeeking) {
       for (Function callback in _onSeekStarteds) {
-        callback(position);
+        callback();
       }
     } else {
       for (Function callback in _onSeekCompleteds) {
-        callback(position);
+        callback();
       }
     }
   }
@@ -315,6 +320,15 @@ class AudioPlayer {
 
   void seek(Duration duration) {
     _log.fine('seek(): $duration');
+
+    // We optimistically set isSeeking to true because waiting for the channel
+    // to report back makes it very difficult for the UI to rely on AudioPlayer's
+    // isSeeking property for UI purposes. Even a tiny gap in time will
+    // probably result in a seek bar jumping from the new seek position back to
+    // the play position and then jump again to the new seek position.
+    // TODO: what are the failure cases for seeking and how do we recover?
+    _setIsSeeking(true);
+
     channel.invokeMethod(
         'audioplayer/$playerId/seek',
         {

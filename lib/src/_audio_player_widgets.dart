@@ -49,6 +49,12 @@ class _AudioState extends State<Audio> {
       onAudioReady: _onAudioReady,
       onPlayerPlaybackUpdate: _onPlayerPlaybackUpdate,
       onStateChanged: _onStateChanged,
+      onSeekStarted: () {
+        _onSeekingChanged(true);
+      },
+      onSeekCompleted: () {
+        _onSeekingChanged(false);
+      }
     );
 
     _setAudioUrl(widget.audioUrl);
@@ -97,6 +103,13 @@ class _AudioState extends State<Audio> {
     }
   }
 
+  _onSeekingChanged(bool isSeeking) {
+    _log.fine('onSeekingChanged: $isSeeking');
+    if (widget.updateMe.contains(WatchableAudioProperties.audioSeeking)) {
+      setState(() {});
+    }
+  }
+
   @override
   void dispose() {
     _player.dispose();
@@ -116,6 +129,7 @@ enum WatchableAudioProperties {
   audioLength,
   audioBuffering,
   audioPlayhead,
+  audioSeeking,
 }
 
 enum PlaybackState {
@@ -156,6 +170,12 @@ class _AudioComponentState extends State<AudioComponent> {
         onAudioReady: _onAudioReady,
         onPlayerPlaybackUpdate: _onPlayerPlaybackUpdate,
         onStateChanged: _onStateChanged,
+        onSeekStarted: () {
+          _onSeekingChanged(true);
+        },
+        onSeekCompleted: () {
+          _onSeekingChanged(false);
+        }
     );
   }
 
@@ -186,6 +206,13 @@ class _AudioComponentState extends State<AudioComponent> {
   _onStateChanged(AudioPlayerState newState) {
     _log.fine('onStateChnaged: $newState');
     if (widget.updateMe.contains(WatchableAudioProperties.audioPlayerState)) {
+      setState(() {});
+    }
+  }
+
+  _onSeekingChanged(bool isSeeking) {
+    _log.fine('onSeekingChanged: $isSeeking');
+    if (widget.updateMe.contains(WatchableAudioProperties.audioSeeking)) {
       setState(() {});
     }
   }

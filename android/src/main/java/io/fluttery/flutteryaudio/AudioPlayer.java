@@ -167,7 +167,9 @@ public class AudioPlayer {
     }
 
     public void seek(int seekPositionInMillis) {
-        Log.d(TAG, "seek(): " + seekPositionInMillis + "ms");
+        Log.d(TAG, "seek() - Current playhead: "
+                + mediaPlayer.getCurrentPosition()
+                + ", Seek position: " + seekPositionInMillis + "ms");
         if (canSeek()) {
             // Seek doesn't have its own dedicated state so when exactly
             // it starts and completes is variable. Therefore, we notify
@@ -244,7 +246,7 @@ public class AudioPlayer {
 
         @Override
         public void onSeekComplete(MediaPlayer mp) {
-            Log.d(TAG, "onSeekComplete()");
+            Log.d(TAG, "onSeekComplete() - playhead: " + mp.getCurrentPosition());
             for (Listener listener : listeners) {
                 listener.onSeekCompleted();
             }
