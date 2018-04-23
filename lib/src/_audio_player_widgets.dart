@@ -10,14 +10,18 @@ class Audio extends StatefulWidget {
 
   final String audioUrl;
   final PlaybackState playbackState;
-  final List<WatchableAudioProperties> updateMe;
+  final List<WatchableAudioProperties> callMe;
+  final Widget Function(BuildContext, AudioPlayer) playerCallback;
+  final List<WatchableAudioProperties> buildMe;
   final Widget Function(BuildContext, AudioPlayer, Widget child) playerBuilder;
   final Widget child;
 
   Audio({
     this.audioUrl,
     this.playbackState = PlaybackState.paused,
-    this.updateMe = const [],
+    this.callMe = const [],
+    this.playerCallback,
+    this.buildMe = const [],
     this.playerBuilder,
     this.child,
   });
@@ -37,6 +41,7 @@ class _AudioState extends State<Audio> {
 
   AudioPlayer _player;
   String _audioUrl;
+  PlaybackState _playbackState;
 
   @override
   void initState() {
@@ -58,6 +63,7 @@ class _AudioState extends State<Audio> {
     );
 
     _setAudioUrl(widget.audioUrl);
+    _playbackState = widget.playbackState;
   }
 
   @override
@@ -66,6 +72,14 @@ class _AudioState extends State<Audio> {
     _setAudioUrl(widget.audioUrl);
 
     // TODO: change to playback mode
+    if (widget.playbackState != _playbackState) {
+      _playbackState = widget.playbackState;
+      if (_playbackState == PlaybackState.playing) {
+        _player.play();
+      } else {
+        _player.pause();
+      }
+    }
 
     // TODO: change to updateMe?
   }
@@ -79,33 +93,58 @@ class _AudioState extends State<Audio> {
   }
 
   _onBufferingUpdate(int percent) {
-    if (widget.updateMe.contains(WatchableAudioProperties.audioBuffering)) {
+//    _log.fine('on buffering update: $percent');
+    if (widget.callMe.contains(WatchableAudioProperties.audioBuffering)) {
+      widget.playerCallback(context, _player);
+    }
+    if (widget.buildMe.contains(WatchableAudioProperties.audioBuffering)) {
       setState(() {});
     }
   }
 
   _onAudioReady() {
-    if (widget.updateMe.contains(WatchableAudioProperties.audioLength)) {
+    _log.fine('on audio ready');
+    if (widget.playbackState == PlaybackState.playing) {
+      _player.play();
+      _log.fine('playing automatically');
+    } else {
+      _log.fine('not playing because client doesn\'t want it');
+    }
+
+    if (widget.callMe.contains(WatchableAudioProperties.audioLength)) {
+      widget.playerCallback(context, _player);
+    }
+    if (widget.buildMe.contains(WatchableAudioProperties.audioLength)) {
       setState(() {});
     }
   }
 
   _onPlayerPlaybackUpdate(Duration position) {
-    if (widget.updateMe.contains(WatchableAudioProperties.audioPlayhead)) {
+//    _log.fine('on playback update: $position');
+    if (widget.callMe.contains(WatchableAudioProperties.audioPlayhead)) {
+      widget.playerCallback(context, _player);
+    }
+    if (widget.buildMe.contains(WatchableAudioProperties.audioPlayhead)) {
       setState(() {});
     }
   }
 
   _onStateChanged(AudioPlayerState newState) {
-    _log.fine('onStateChnaged: $newState');
-    if (widget.updateMe.contains(WatchableAudioProperties.audioPlayerState)) {
+    _log.fine('on state changed: $newState');
+    if (widget.callMe.contains(WatchableAudioProperties.audioPlayerState)) {
+      widget.playerCallback(context, _player);
+    }
+    if (widget.buildMe.contains(WatchableAudioProperties.audioPlayerState)) {
       setState(() {});
     }
   }
 
   _onSeekingChanged(bool isSeeking) {
-    _log.fine('onSeekingChanged: $isSeeking');
-    if (widget.updateMe.contains(WatchableAudioProperties.audioSeeking)) {
+    _log.fine('on seeking changed: $isSeeking');
+    if (widget.callMe.contains(WatchableAudioProperties.audioSeeking)) {
+      widget.playerCallback(context, _player);
+    }
+    if (widget.buildMe.contains(WatchableAudioProperties.audioSeeking)) {
       setState(() {});
     }
   }
@@ -118,6 +157,7 @@ class _AudioState extends State<Audio> {
 
   @override
   Widget build(BuildContext context) {
+    _log.fine('building');
     return widget.playerBuilder != null
       ? widget.playerBuilder(context, _player, widget.child)
       : widget.child;

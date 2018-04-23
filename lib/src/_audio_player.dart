@@ -7,6 +7,8 @@ class AudioPlayer {
 
   final String playerId;
   final MethodChannel channel;
+
+  // Sets of callbacks that clients can register.
   final Set<Function(AudioPlayerState)> _onStateChangeds = new Set();
   final Set<Function(Duration)> _onAudioLengthChangeds = new Set();
   final Set<Function> _onAudioLoadings = new Set();
@@ -19,6 +21,7 @@ class AudioPlayer {
   final Set<Function> _onPlayerCompleteds = new Set();
   final Set<Function> _onSeekStarteds = new Set();
   final Set<Function> _onSeekCompleteds = new Set();
+
   AudioPlayerState _state;
   Duration _audioLength;
   int _bufferedPercent;
@@ -34,7 +37,7 @@ class AudioPlayer {
     _setState(AudioPlayerState.idle);
 
     channel.setMethodCallHandler((MethodCall call) {
-      print('Received channel message: ${call.method}');
+//      print('Received channel message: ${call.method}');
       switch (call.method) {
         case "onAudioLoading":
           _log.fine('onAudioLoading');
@@ -51,7 +54,7 @@ class AudioPlayer {
           }
           break;
         case "onBufferingUpdate":
-          _log.fine('onBufferingUpdate');
+//          _log.fine('onBufferingUpdate');
 
           final percent = call.arguments['percent'];
           _setBufferedPercent(percent);
@@ -59,8 +62,6 @@ class AudioPlayer {
           break;
         case "onAudioReady":
           _log.fine('onAudioReady');
-          _log.fine('for real');
-          _log.fine('${call.arguments['audioLength']}');
 
           // When audio is ready then we get passed the length of the clip.
           final audioLengthInMillis = call.arguments['audioLength'];
@@ -72,11 +73,11 @@ class AudioPlayer {
           _setState(AudioPlayerState.paused);
 
           for (Function callback in _onAudioReadys) {
-            callback(callback);
+            callback();
           }
           break;
         case "onPlayerPlaying":
-          _log.fine('onPlayerPlaying');
+//          _log.fine('onPlayerPlaying');
 
           _setState(AudioPlayerState.playing);
 
@@ -85,7 +86,7 @@ class AudioPlayer {
           }
           break;
         case "onPlayerPlaybackUpdate":
-          _log.fine('onPlayerPlaybackUpdate');
+//          _log.fine('onPlayerPlaybackUpdate');
 
           // The playhead has moved, update our playhead position reference.
           _setPosition(new Duration(milliseconds: call.arguments['position']));

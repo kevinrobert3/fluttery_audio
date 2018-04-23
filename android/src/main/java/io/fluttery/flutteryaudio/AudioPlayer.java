@@ -60,9 +60,11 @@ public class AudioPlayer {
 
     public void load(String url) {
         Log.d(TAG, "load()");
-        // TODO: if no prepared, we should prepare
-        // TODO: what if we're playing something?
         try {
+            // Stop polling the playhead position in case we were already
+            // playing some audio.
+            stopPlaybackPolling();
+
             mediaPlayer.reset();
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
@@ -201,6 +203,7 @@ public class AudioPlayer {
                 @Override
                 public void run() {
                     if (isPollingPlayback) {
+                        Log.d(TAG, "Notifying playback listeners of playhead change.");
                         for (Listener listener : listeners) {
                             listener.onPlayerPlaybackUpdate(
                                 playbackPosition(),

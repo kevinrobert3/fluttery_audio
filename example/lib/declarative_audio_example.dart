@@ -68,7 +68,7 @@ class _DeclarativeAudioSimpleExampleState extends State<DeclarativeAudioSimpleEx
   Widget build(BuildContext context) {
     return new Audio(
       audioUrl: widget.audioUrl,
-      updateMe: [
+      buildMe: [
         WatchableAudioProperties.audioPlayerState,
         WatchableAudioProperties.audioLength,
         WatchableAudioProperties.audioPlayhead,
@@ -180,6 +180,87 @@ class _DeclarativeAudioComponentsExampleState extends State<DeclarativeAudioComp
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class PlaylistExample extends StatefulWidget {
+  @override
+  _PlaylistExampleState createState() => new _PlaylistExampleState();
+}
+
+class _PlaylistExampleState extends State<PlaylistExample> {
+
+  final _audioUrls = [
+    "https://api.soundcloud.com/tracks/266891990/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P",
+    "https://api.soundcloud.com/tracks/260578593/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P",
+    "https://api.soundcloud.com/tracks/258735531/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P",
+    "https://api.soundcloud.com/tracks/9540779/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P",
+    "https://api.soundcloud.com/tracks/9540352/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P",
+    "https://api.soundcloud.com/tracks/295692063/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P",
+  ];
+
+  int _activeIndex = 0;
+  PlaybackState _playbackState = PlaybackState.playing;
+
+  @override
+  Widget build(BuildContext context) {
+    return new AudioPlaylist(
+      playlist: _audioUrls,
+      startPlayingFromIndex: _activeIndex,
+      playbackState: _playbackState,
+      child: new Center(
+        child: new Row(
+          children: <Widget>[
+            new Expanded(child: new Container()),
+            new IconButton(
+              icon: new Icon(
+                Icons.skip_previous,
+                size: 35.0,
+              ),
+              onPressed: () {
+                setState(() {
+                  if (_activeIndex > 0) {
+                    --_activeIndex;
+                  }
+                });
+              },
+            ),
+            new Padding(
+              padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+              child: new IconButton(
+                icon: new Icon(
+                  _playbackState == PlaybackState.paused ? Icons.play_arrow : Icons.pause,
+                  size: 35.0,
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (_playbackState == PlaybackState.playing) {
+                      _playbackState = PlaybackState.paused;
+                    } else {
+                      _playbackState = PlaybackState.playing;
+                    }
+                  });
+                },
+              ),
+            ),
+            new IconButton(
+              icon: new Icon(
+                Icons.skip_next,
+                size: 35.0,
+              ),
+              onPressed: () {
+                setState(() {
+                  if (_activeIndex < _audioUrls.length - 1) {
+                    ++_activeIndex;
+                  }
+                });
+              },
+            ),
+            new Expanded(child: new Container()),
+          ],
+        ),
       ),
     );
   }

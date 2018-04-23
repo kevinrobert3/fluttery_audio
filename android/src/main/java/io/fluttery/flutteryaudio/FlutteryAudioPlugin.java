@@ -44,16 +44,19 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
       @Override
       public void onAudioLoading() {
+        Log.d(TAG, "Android -> Flutter: onAudioLoading()");
         channel.invokeMethod("onAudioLoading", null);
       }
 
       @Override
       public void onBufferingUpdate(int percent) {
+        Log.d(TAG, "Android -> Flutter: onBufferingUpdate()");
         channel.invokeMethod("onBufferingUpdate", null);
       }
 
       @Override
       public void onAudioReady() {
+        Log.d(TAG, "Android -> Flutter: onAudioReady()");
         Map<String, Object> args = new HashMap<>();
         args.put("audioLength", player.audioLength());
         channel.invokeMethod("onAudioReady", args);
@@ -61,11 +64,13 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
       @Override
       public void onPlayerPlaying() {
+        Log.d(TAG, "Android -> Flutter: onPlayerPlaying()");
         channel.invokeMethod("onPlayerPlaying", null);
       }
 
       @Override
       public void onPlayerPlaybackUpdate(int position, int audioLength) {
+        Log.d(TAG, "Android -> Flutter: onPlayerPlaybackUpdate()");
         Map<String, Object> args = new HashMap<>();
         args.put("position", position);
         args.put("audioLength", audioLength);
@@ -74,26 +79,32 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
       @Override
       public void onPlayerPaused() {
+        Log.d(TAG, "Android -> Flutter: onPlayerPaused()");
         channel.invokeMethod("onPlayerPaused", null);
       }
 
       @Override
       public void onPlayerStopped() {
+        Log.d(TAG, "Android -> Flutter: onPlayerStopped()");
         channel.invokeMethod("onPlayerStopped", null);
       }
 
       @Override
       public void onPlayerCompleted() {
+        Log.d(TAG, "Android -> Flutter: onPlayerCompleted()");
         channel.invokeMethod("onPlayerCompleted", null);
       }
 
       @Override
       public void onSeekStarted() {
+        Log.d(TAG, "Android -> Flutter: onSeekStarted()");
         channel.invokeMethod("onSeekStarted", null);
       }
 
       @Override
       public void onSeekCompleted() {
+        Log.d(TAG, "Android -> Flutter: onSeekCompleted()");
+
         // We send the new seek position over the channel with the
         // onSeekCompleted call because clients will likely need to
         // know immediately after seeking what the position is. If we

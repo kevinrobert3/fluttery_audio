@@ -13,7 +13,7 @@ const STREAM_URL = "https://api.soundcloud.com/tracks/" + SOUNDCLOUD_ID_DEBUT_TR
 void main() {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
-    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+    print('${rec.level.name}: ${rec.time}: ${rec.loggerName}: ${rec.message}');
   });
 
   runApp(new MyApp());
@@ -37,9 +37,10 @@ class _MyAppState extends State<MyApp> {
 //          child: new DeclarativeAudioSimpleExample(
 //            audioUrl: STREAM_URL,
 //          ),
-          child: new DeclarativeAudioComponentsExample(
-            audioUrl: STREAM_URL,
-          ),
+//          child: new DeclarativeAudioComponentsExample(
+//            audioUrl: STREAM_URL,
+//          ),
+          child: new PlaylistExample(),
 //          child: new ImperativeAudioExample(
 //            audioUrl: STREAM_URL,
 //          ),
