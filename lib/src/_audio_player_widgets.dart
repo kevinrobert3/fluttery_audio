@@ -70,6 +70,19 @@ class _AudioState extends State<Audio> {
   void didUpdateWidget(Widget oldWidget) {
     super.didUpdateWidget(oldWidget);
     _log.fine('Widget changed. Updating Audio Widget state.');
+    _synchronizeStateWithWidget();
+  }
+
+  /// reassemble is overridden so that hot reload can be used to play with
+  /// audio playback.
+  @override
+  void reassemble() {
+    super.reassemble();
+    _log.fine('reassemble()');
+    _synchronizeStateWithWidget();
+  }
+
+  void _synchronizeStateWithWidget() {
     _setAudioUrl(widget.audioUrl);
 
     if (widget.playbackState != _playbackState) {
@@ -157,9 +170,13 @@ class _AudioState extends State<Audio> {
   @override
   Widget build(BuildContext context) {
     _log.fine('building');
-    return widget.playerBuilder != null
-      ? widget.playerBuilder(context, _player, widget.child)
-      : widget.child;
+    if (widget.playerBuilder != null) {
+      return widget.playerBuilder(context, _player, widget.child);
+    } else if (widget.child != null) {
+      return widget.child;
+    } else {
+      return new Container();
+    }
   }
 }
 

@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      theme: new ThemeData.dark(),
       home: new Scaffold(
         appBar: new AppBar(
           title: new Text('Fluttery Audio'),
@@ -41,6 +42,7 @@ class _MyAppState extends State<MyApp> {
 //            audioUrl: STREAM_URL,
 //          ),
           child: new PlaylistExample(),
+
 //          child: new ImperativeAudioExample(
 //            audioUrl: STREAM_URL,
 //          ),
