@@ -20,7 +20,11 @@ class AudioPlaylist extends StatefulWidget {
   _AudioPlaylistState createState() => new _AudioPlaylistState();
 }
 
-class _AudioPlaylistState extends State<AudioPlaylist> {
+class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
+
+  static Playlist of(BuildContext context) {
+    return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>()) as Playlist;
+  }
 
   int _activeAudioIndex;
   AudioPlayerState _prevState;
@@ -42,6 +46,18 @@ class _AudioPlaylistState extends State<AudioPlaylist> {
     }
   }
 
+  void next() {
+    if (_activeAudioIndex < (widget.playlist.length - 1)) {
+      setState(() => ++_activeAudioIndex);
+    }
+  }
+
+  void previous() {
+    if (_activeAudioIndex > 0) {
+      setState(() => --_activeAudioIndex);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print('Building with active index: $_activeAudioIndex');
@@ -56,9 +72,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> {
           if (player.state == AudioPlayerState.completed) {
             print('Reached end of audio. Trying to play next clip.');
             // Playback has completed. Go to next song.
-            if (_activeAudioIndex < (widget.playlist.length - 1)) {
-              setState(() => ++_activeAudioIndex);
-            }
+            next();
           }
 
           _prevState = player.state;
@@ -67,4 +81,36 @@ class _AudioPlaylistState extends State<AudioPlaylist> {
       child: widget.child,
     );
   }
+}
+
+class AudioPlaylistComponent extends StatefulWidget {
+
+  final Function(BuildContext, Playlist, Widget child) playlistBuilder;
+  final Widget child;
+
+  AudioPlaylistComponent({
+    this.playlistBuilder,
+    this.child,
+  });
+
+  @override
+  _AudioPlaylistComponentState createState() => new _AudioPlaylistComponentState();
+}
+
+class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
+  @override
+  Widget build(BuildContext context) {
+    return widget.playlistBuilder != null
+      ? widget.playlistBuilder(
+          context,
+          _AudioPlaylistState.of(context),
+          widget.child,
+        )
+      : widget.child;
+  }
+}
+
+abstract class Playlist {
+  void next();
+  void previous();
 }

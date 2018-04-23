@@ -214,18 +214,19 @@ class _PlaylistExampleState extends State<PlaylistExample> {
         child: new Row(
           children: <Widget>[
             new Expanded(child: new Container()),
-            new IconButton(
-              icon: new Icon(
-                Icons.skip_previous,
-                size: 35.0,
-              ),
-              onPressed: () {
-                setState(() {
-                  if (_activeIndex > 0) {
-                    --_activeIndex;
-                  }
-                });
+            new AudioPlaylistComponent(
+              playlistBuilder: (BuildContext context, Playlist playlist, Widget child) {
+                return new IconButton(
+                  icon: new Icon(
+                    Icons.skip_previous,
+                    size: 35.0,
+                  ),
+                  onPressed: () {
+                    playlist.previous();
+                  },
+                );
               },
+              child: null,
             ),
             new Padding(
               padding: const EdgeInsets.only(left: 24.0, right: 24.0),
@@ -245,18 +246,19 @@ class _PlaylistExampleState extends State<PlaylistExample> {
                 },
               ),
             ),
-            new IconButton(
-              icon: new Icon(
-                Icons.skip_next,
-                size: 35.0,
-              ),
-              onPressed: () {
-                setState(() {
-                  if (_activeIndex < _audioUrls.length - 1) {
-                    ++_activeIndex;
-                  }
-                });
+            new AudioPlaylistComponent(
+              playlistBuilder: (BuildContext context, Playlist playlist, Widget child) {
+                return new IconButton(
+                  icon: new Icon(
+                    Icons.skip_next,
+                    size: 35.0,
+                  ),
+                  onPressed: () {
+                    playlist.next();
+                  },
+                );
               },
+              child: null,
             ),
             new Expanded(child: new Container()),
           ],
