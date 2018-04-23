@@ -25,6 +25,7 @@ public class AudioPlayer {
     private final Set<Listener> listeners = new CopyOnWriteArraySet<>();
     private MediaPlayer mediaPlayer;
     private State state;
+    private boolean isPlaybackDesired = false;
     private Handler playbackPollHandler;
     private boolean isPollingPlayback = false;
 
@@ -69,6 +70,7 @@ public class AudioPlayer {
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
 
+            state = State.loading;
             for (Listener listener : listeners) {
                 listener.onAudioLoading();
             }
@@ -91,6 +93,8 @@ public class AudioPlayer {
 
     public void play() {
         Log.d(TAG, "play()");
+        isPlaybackDesired = true;
+
         if (canPlay()) {
             mediaPlayer.start();
             state = State.playing;
@@ -122,6 +126,8 @@ public class AudioPlayer {
 
     public void pause() {
         Log.d(TAG, "pause()");
+        isPlaybackDesired = false;
+
         if (state == State.playing) {
             mediaPlayer.pause();
             state = State.paused;
@@ -142,6 +148,8 @@ public class AudioPlayer {
 
     public void stop() {
         Log.d(TAG, "stop()");
+        isPlaybackDesired = false;
+
         if (canStop()) {
             mediaPlayer.stop();
             state = State.stopped;
@@ -232,10 +240,18 @@ public class AudioPlayer {
         @Override
         public void onPrepared(MediaPlayer mp) {
             Log.d(TAG, "onPrepared()");
-            state = State.paused;
 
             for (Listener listener : listeners) {
                 listener.onAudioReady();
+            }
+
+            state = State.paused;
+            if (isPlaybackDesired) {
+                play();
+            } else {
+                for (Listener listener : listeners) {
+                    listener.onPlayerPaused();
+                }
             }
         }
 

@@ -123,7 +123,7 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
   @Override
   public void onMethodCall(MethodCall call, Result result) {
-    Log.d(TAG, "onMethodCall(): " + call.method);
+    Log.d(TAG, "Flutter -> Android: " + call.method);
     try {
       AudioPlayerCall playerCall = parseMethodName(call.method);
       Log.d(TAG, playerCall.toString());

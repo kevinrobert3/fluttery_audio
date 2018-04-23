@@ -210,60 +210,59 @@ class _PlaylistExampleState extends State<PlaylistExample> {
       playlist: _audioUrls,
       startPlayingFromIndex: _activeIndex,
       playbackState: _playbackState,
-      child: new Center(
-        child: new Row(
-          children: <Widget>[
-            new Expanded(child: new Container()),
-            new AudioPlaylistComponent(
-              playlistBuilder: (BuildContext context, Playlist playlist, Widget child) {
-                return new IconButton(
-                  icon: new Icon(
-                    Icons.skip_previous,
-                    size: 35.0,
-                  ),
-                  onPressed: () {
-                    playlist.previous();
-                  },
-                );
-              },
-              child: null,
-            ),
-            new Padding(
-              padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-              child: new IconButton(
+      playlistBuilder: (BuildContext context, Playlist playlist, Widget child) {
+        return new Center(
+          child: new Row(
+            children: <Widget>[
+              new Expanded(child: new Container()),
+              new IconButton(
                 icon: new Icon(
-                  _playbackState == PlaybackState.paused ? Icons.play_arrow : Icons.pause,
+                  Icons.skip_previous,
                   size: 35.0,
                 ),
                 onPressed: () {
-                  setState(() {
-                    if (_playbackState == PlaybackState.playing) {
-                      _playbackState = PlaybackState.paused;
-                    } else {
-                      _playbackState = PlaybackState.playing;
-                    }
-                  });
+                  playlist.previous();
                 },
               ),
-            ),
-            new AudioPlaylistComponent(
-              playlistBuilder: (BuildContext context, Playlist playlist, Widget child) {
-                return new IconButton(
-                  icon: new Icon(
-                    Icons.skip_next,
-                    size: 35.0,
-                  ),
-                  onPressed: () {
-                    playlist.next();
+              new Padding(
+                padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                child: new AudioComponent(
+                  updateMe: [
+                    WatchableAudioProperties.audioPlayerState,
+                  ],
+                  playerBuilder: (BuildContext context, AudioPlayer audioPlayer, Widget child) {
+                    return new IconButton(
+                      icon: new Icon(
+                        audioPlayer.state == AudioPlayerState.paused ? Icons.play_arrow : Icons.pause,
+                        size: 35.0,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (audioPlayer.state == AudioPlayerState.playing) {
+                            _playbackState = PlaybackState.paused;
+                          } else if (audioPlayer.state == AudioPlayerState.paused) {
+                            _playbackState = PlaybackState.playing;
+                          }
+                        });
+                      },
+                    );
                   },
-                );
-              },
-              child: null,
-            ),
-            new Expanded(child: new Container()),
-          ],
-        ),
-      ),
+                ),
+              ),
+              new IconButton(
+                icon: new Icon(
+                  Icons.skip_next,
+                  size: 35.0,
+                ),
+                onPressed: () {
+                  playlist.next();
+                },
+              ),
+              new Expanded(child: new Container()),
+            ],
+          ),
+        );
+      },
     );
   }
 }

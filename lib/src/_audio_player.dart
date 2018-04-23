@@ -67,17 +67,15 @@ class AudioPlayer {
           final audioLengthInMillis = call.arguments['audioLength'];
           _setAudioLength(new Duration(milliseconds: audioLengthInMillis));
 
-          // When audio is ready then the playhead is at zero and we're paused.
+          // When audio is ready then the playhead is at zero.
           _setPosition(const Duration(milliseconds: 0));
-          _log.fine("Setting state to paused");
-          _setState(AudioPlayerState.paused);
 
           for (Function callback in _onAudioReadys) {
             callback();
           }
           break;
         case "onPlayerPlaying":
-//          _log.fine('onPlayerPlaying');
+          _log.fine('onPlayerPlaying');
 
           _setState(AudioPlayerState.playing);
 

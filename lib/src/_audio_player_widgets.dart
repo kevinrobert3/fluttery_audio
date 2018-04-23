@@ -8,6 +8,13 @@ final _log = new Logger('AudioPlayerWidget');
 
 class Audio extends StatefulWidget {
 
+  static AudioPlayer of(BuildContext context) {
+    _AudioState state = context.ancestorStateOfType(
+        new TypeMatcher<_AudioState>()
+    );
+    return state?._player;
+  }
+
   final String audioUrl;
   final PlaybackState playbackState;
   final List<WatchableAudioProperties> callMe;
@@ -31,13 +38,6 @@ class Audio extends StatefulWidget {
 }
 
 class _AudioState extends State<Audio> {
-
-  static AudioPlayer of(BuildContext context) {
-    _AudioState state = context.ancestorStateOfType(
-        new TypeMatcher<_AudioState>()
-    );
-    return state?._player;
-  }
 
   AudioPlayer _player;
   String _audioUrl;
@@ -69,19 +69,18 @@ class _AudioState extends State<Audio> {
   @override
   void didUpdateWidget(Widget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _log.fine('Widget changed. Updating Audio Widget state.');
     _setAudioUrl(widget.audioUrl);
 
-    // TODO: change to playback mode
     if (widget.playbackState != _playbackState) {
+      _log.fine('The desired audio playback state has changed to: ${widget.playbackState}');
       _playbackState = widget.playbackState;
       if (_playbackState == PlaybackState.playing) {
         _player.play();
-      } else {
+      } else if (_playbackState == PlaybackState.paused) {
         _player.pause();
       }
     }
-
-    // TODO: change to updateMe?
   }
 
   _setAudioUrl(String url) {
@@ -104,10 +103,10 @@ class _AudioState extends State<Audio> {
 
   _onAudioReady() {
     _log.fine('on audio ready');
-    if (widget.playbackState == PlaybackState.playing) {
+    if (_playbackState == PlaybackState.playing) {
       _player.play();
       _log.fine('playing automatically');
-    } else {
+    } else if (_playbackState == PlaybackState.paused) {
       _log.fine('not playing because client doesn\'t want it');
     }
 
@@ -201,7 +200,7 @@ class _AudioComponentState extends State<AudioComponent> {
   void initState() {
     super.initState();
 
-    _player = _AudioState.of(context);
+    _player = Audio.of(context);
     if (_player == null) {
       throw new StateError('AudioComponent could not find an Audio ancestor.');
     }

@@ -7,12 +7,14 @@ class AudioPlaylist extends StatefulWidget {
   final List<String> playlist;
   final int startPlayingFromIndex;
   final PlaybackState playbackState;
+  final Function(BuildContext, Playlist, Widget child) playlistBuilder;
   final Widget child;
 
   AudioPlaylist({
     this.playlist = const [],
     this.startPlayingFromIndex = 0,
     this.playbackState = PlaybackState.paused,
+    this.playlistBuilder,
     this.child,
   });
 
@@ -28,6 +30,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   int _activeAudioIndex;
   AudioPlayerState _prevState;
+  AudioPlayer _audioPlayer;
 
   @override
   void initState() {
@@ -46,12 +49,17 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
     }
   }
 
+  @override
+  AudioPlayer get audioPlayer => _audioPlayer;
+
+  @override
   void next() {
     if (_activeAudioIndex < (widget.playlist.length - 1)) {
       setState(() => ++_activeAudioIndex);
     }
   }
 
+  @override
   void previous() {
     if (_activeAudioIndex > 0) {
       setState(() => --_activeAudioIndex);
@@ -78,7 +86,13 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
           _prevState = player.state;
         }
       },
-      child: widget.child,
+      playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
+        _audioPlayer = player;
+
+        return widget.playlistBuilder != null
+            ? widget.playlistBuilder(context, this, widget.child)
+            : widget.child;
+      },
     );
   }
 }
@@ -111,6 +125,7 @@ class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
 }
 
 abstract class Playlist {
+  AudioPlayer get audioPlayer;
   void next();
   void previous();
 }
