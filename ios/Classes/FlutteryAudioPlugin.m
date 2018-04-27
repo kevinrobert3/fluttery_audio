@@ -134,9 +134,10 @@
   [_channel invokeMethod:@"onSeekStarted" arguments:nil];
 }
 
-- (void) onSeekCompleted {
+- (void) onSeekCompleted:(long) position {
   NSLog(@"onSeekCompleted");
-  [_channel invokeMethod:@"onSeekCompleted" arguments:nil];
+  NSDictionary* args = @{ @"position" : @(position) };
+  [_channel invokeMethod:@"onSeekCompleted" arguments:args];
 }
 
 //---------- End AudioPlayerListener ---------

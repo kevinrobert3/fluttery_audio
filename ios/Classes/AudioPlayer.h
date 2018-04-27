@@ -95,7 +95,7 @@
 - (void) onSeekStarted;
 
 // A seek operation has completed.
-- (void) onSeekCompleted;
+- (void) onSeekCompleted:(long)position;
 
 @end
 

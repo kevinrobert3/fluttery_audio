@@ -210,15 +210,16 @@ const NSString* TAG = @"AudioPlayer";
 
 - (void) seek:(int64_t) seekPositionInMillis {
   NSLog(@"%@: %@: %lli", TAG, @"seek()", seekPositionInMillis);
+  CMTime seekTime = CMTimeMakeWithSeconds(seekPositionInMillis / 1000, NSEC_PER_SEC);
+  NSLog(@"%@: Decoded seek seconds: %f", TAG, CMTimeGetSeconds(seekTime));
   
   for (id<AudioPlayerListener> listener in [_listeners allObjects]) {
     [listener onSeekStarted];
   }
   
-  CMTime seekTime = CMTimeMakeWithSeconds(seekPositionInMillis, 1000);
   [_audioPlayer seekToTime:seekTime completionHandler:^(bool finished) {
     for (id<AudioPlayerListener> listener in [self->_listeners allObjects]) {
-      [listener onSeekCompleted];
+      [listener onSeekCompleted:[self playbackPosition]];
     }
   }];
 }
