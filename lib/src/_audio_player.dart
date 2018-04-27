@@ -37,7 +37,7 @@ class AudioPlayer {
     _setState(AudioPlayerState.idle);
 
     channel.setMethodCallHandler((MethodCall call) {
-//      print('Received channel message: ${call.method}');
+      print('Received channel message: ${call.method}');
       switch (call.method) {
         case "onAudioLoading":
           _log.fine('onAudioLoading');
@@ -54,14 +54,14 @@ class AudioPlayer {
           }
           break;
         case "onBufferingUpdate":
-//          _log.fine('onBufferingUpdate');
+          _log.fine('onBufferingUpdate');
 
           final percent = call.arguments['percent'];
           _setBufferedPercent(percent);
 
           break;
         case "onAudioReady":
-          _log.fine('onAudioReady');
+          _log.fine('onAudioReady, audioLength: ${call.arguments['audioLength']}');
 
           // When audio is ready then we get passed the length of the clip.
           final audioLengthInMillis = call.arguments['audioLength'];
@@ -84,7 +84,7 @@ class AudioPlayer {
           }
           break;
         case "onPlayerPlaybackUpdate":
-//          _log.fine('onPlayerPlaybackUpdate');
+          _log.fine('onPlayerPlaybackUpdate, position: ${call.arguments['position']}');
 
           // The playhead has moved, update our playhead position reference.
           _setPosition(new Duration(milliseconds: call.arguments['position']));

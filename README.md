@@ -2,9 +2,7 @@
 
 Flutter plugin for playing audio files and streams
 
-## Getting Started
+## TODO
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
-
-For help on editing plugin code, view the [documentation](https://flutter.io/platform-plugins/#edit-code).
+* Create unified definition of audio player behaviors
+  * Implement those behaviors for Android and iOS

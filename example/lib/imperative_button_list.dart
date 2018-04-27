@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:fluttery_audio/fluttery_audio.dart';
 import 'package:meta/meta.dart';
 
-class ImperativeAudioExample extends StatefulWidget {
+class ImperativeButtonListScreen extends StatefulWidget {
 
   final String audioUrl;
 
-  ImperativeAudioExample({
+  ImperativeButtonListScreen({
     @required this.audioUrl,
   });
 
   @override
-  _ImperativeAudioExampleState createState() => new _ImperativeAudioExampleState();
+  _ImperativeButtonListScreenState createState() => new _ImperativeButtonListScreenState();
 }
 
-class _ImperativeAudioExampleState extends State<ImperativeAudioExample> {
+class _ImperativeButtonListScreenState extends State<ImperativeButtonListScreen> {
   AudioPlayer audioPlayer;
   Duration audioLength;
   Duration position;
