@@ -53,6 +53,9 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
   AudioPlayer get audioPlayer => _audioPlayer;
 
   @override
+  int get activeIndex => _activeAudioIndex;
+
+  @override
   void next() {
     if (_activeAudioIndex < (widget.playlist.length - 1)) {
       setState(() => ++_activeAudioIndex);
@@ -126,6 +129,7 @@ class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
 
 abstract class Playlist {
   AudioPlayer get audioPlayer;
+  int get activeIndex;
   void next();
   void previous();
 }

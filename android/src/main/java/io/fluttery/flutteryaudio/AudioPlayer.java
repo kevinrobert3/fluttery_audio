@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class AudioPlayer {
 
+    public static int playerId = -1;
+
     private static final String TAG = "AudioPlayer";
 
     private final Set<Listener> listeners = new CopyOnWriteArraySet<>();
@@ -30,6 +33,7 @@ public class AudioPlayer {
     private boolean isPollingPlayback = false;
 
     public AudioPlayer(@NonNull MediaPlayer mediaPlayer) {
+        AudioPlayer.playerId = mediaPlayer.getAudioSessionId();
         this.mediaPlayer = mediaPlayer;
         this.state = State.idle;
 

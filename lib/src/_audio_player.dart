@@ -39,6 +39,10 @@ class AudioPlayer {
     channel.setMethodCallHandler((MethodCall call) {
       print('Received channel message: ${call.method}');
       switch (call.method) {
+        case "onFftVisualization":
+          print('FFT Visualization:');
+          print('${call.arguments['fft'].runtimeType}');
+          break;
         case "onAudioLoading":
           _log.fine('onAudioLoading');
 
@@ -131,6 +135,8 @@ class AudioPlayer {
           break;
       }
     });
+
+    channel.invokeMethod('audioplayer/$playerId/activate_visualizer');
   }
 
   void dispose() {

@@ -1,19 +1,20 @@
 package io.fluttery.flutteryaudio;
 
-import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.audiofx.Visualizer;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
@@ -23,8 +24,10 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
   private static final String TAG = "FlutteryAudioPlugin";
 
   private static final Pattern METHOD_NAME_MATCH = Pattern.compile("audioplayer/([^/]+)/([^/]+)");
+  private static final Pattern VISUALIZER_METHOD_NAME_MATCH = Pattern.compile("audiovisualizer/([^/]+)");
 
   private static MethodChannel channel;
+  private static MethodChannel visualizerChannel;
 
   /**
    * Plugin registration.
@@ -32,6 +35,9 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
   public static void registerWith(Registrar registrar) {
     channel = new MethodChannel(registrar.messenger(), "fluttery_audio");
     channel.setMethodCallHandler(new FlutteryAudioPlugin());
+
+    visualizerChannel = new MethodChannel(registrar.messenger(), "fluttery_audio_visualizer");
+    visualizerChannel.setMethodCallHandler(new FlutteryAudioVisualizerPlugin());
   }
 
   private AudioPlayer player; // TODO: support multiple players.
@@ -186,6 +192,86 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
     @Override
     public String toString() {
       return String.format("AudioPlayerCall - Player ID: %s, Command: %s", playerId, command);
+    }
+  }
+
+  private static class FlutteryAudioVisualizerPlugin implements MethodCallHandler {
+
+    private AudioVisualizer visualizer = new AudioVisualizer();
+
+    @Override
+    public void onMethodCall(MethodCall call, Result result) {
+      Log.d(TAG, "Flutter -> Android: " + call.method);
+      try {
+        AudioVisualizerPlayerCall playerCall = parseMethodName(call.method);
+        Log.d(TAG, playerCall.toString());
+
+        switch (playerCall.command) {
+          case "activate_visualizer":
+            Log.d(TAG, "Activating visualizer");
+            if (visualizer.isActive()) {
+              Log.d(TAG, "Visualizer is already active. Ignoring.");
+              return;
+            }
+
+            // TODO: support media player specification for visualizer
+            // TODO: support requested sample rate and buffer size
+            // TODO: support selection of FFT vs waveform
+            visualizer.activate(new Visualizer.OnDataCaptureListener() {
+              @Override
+              public void onWaveFormDataCapture(Visualizer visualizer, byte[] waveform, int samplingRate) {
+                Map<String, Object> args = new HashMap<>();
+                args.put("waveform", waveform);
+
+                visualizerChannel.invokeMethod("onWaveformVisualization", args);
+              }
+
+              @Override
+              public void onFftDataCapture(Visualizer visualizer, byte[] sharedFft, int samplingRate) {
+                byte[] fft = Arrays.copyOf(sharedFft, sharedFft.length);
+                
+                Map<String, Object> args = new HashMap<>();
+                args.put("fft", fft);
+
+                visualizerChannel.invokeMethod("onFftVisualization", args);
+              }
+            });
+            break;
+          case "deactivate_visualizer":
+            Log.d(TAG, "Deactivating visualizer");
+            visualizer.deactivate();
+            break;
+        }
+
+        result.success(null);
+      } catch (IllegalArgumentException e) {
+        result.notImplemented();
+      }
+    }
+
+    private AudioVisualizerPlayerCall parseMethodName(@NonNull String methodName) {
+      Matcher matcher = VISUALIZER_METHOD_NAME_MATCH.matcher(methodName);
+
+      if (matcher.matches()) {
+        String command = matcher.group(1);
+        return new AudioVisualizerPlayerCall(command);
+      } else {
+        Log.d(TAG, "Match not found");
+        throw new IllegalArgumentException("Invalid audio visualizer message: " + methodName);
+      }
+    }
+
+    private static class AudioVisualizerPlayerCall {
+      public final String command;
+
+      private AudioVisualizerPlayerCall(@NonNull String command) {
+        this.command = command;
+      }
+
+      @Override
+      public String toString() {
+        return String.format("AudioVisualizerPlayerCall - Command: %s", command);
+      }
     }
   }
 }
