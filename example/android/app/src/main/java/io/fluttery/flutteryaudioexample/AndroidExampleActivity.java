@@ -26,13 +26,7 @@ public class AndroidExampleActivity extends AppCompatActivity {
 
     private static final String TAG = "AndroidExampleActivity";
 
-    private static final String SOUNDCLOUD_ID_ELECTRO_MONOTONY = "266891990";
-    private static final String SOUNDCLOUD_ID_DEBUT_TRANCE = "260578593";
-    private static final String SOUNDCLOUD_ID_DEBUT = "258735531";
-    private static final String SOUNDCLOUD_ID_MASTERS_TRANCE = "9540779";
-    private static final String SOUNDCLOUD_ID_MASTERS_TRIBAL = "9540352";
-    private static final String SOUNDCLOUD_OTHER = "295692063";
-    private static final String STREAM_URL = "https://api.soundcloud.com/tracks/" + SOUNDCLOUD_ID_DEBUT_TRANCE +"/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P";
+    private static final String STREAM_URL = "https://api.soundcloud.com/tracks/260578593/stream?secret_token=s-tj3IS&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P";
 
     private AudioPlayer audioPlayer;
     private AudioPlayerListener audioPlayerListener;
@@ -130,7 +124,7 @@ public class AndroidExampleActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "On FFT data");
+//                        Log.d(TAG, "On FFT data");
                         visualizerView.updateVisualizer(fft);
                     }
                 });

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio/fluttery_audio.dart';
 import 'package:fluttery_audio_example/audio_samples.dart';
 import 'package:fluttery_audio_example/declarative_button_list_components.dart';
 import 'package:fluttery_audio_example/declarative_button_list_whole_state.dart';

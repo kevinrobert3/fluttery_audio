@@ -17,6 +17,8 @@ public class AudioVisualizer {
     }
 
     public void activate(@NonNull Visualizer.OnDataCaptureListener listener) {
+        // TODO: handle playerId in non-static way
+        // TODO: support multiple AuidioPlayers
         visualizer = new Visualizer(AudioPlayer.playerId);
         visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
         visualizer.setDataCaptureListener(

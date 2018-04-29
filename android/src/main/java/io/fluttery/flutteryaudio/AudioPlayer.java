@@ -4,13 +4,11 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -215,7 +213,7 @@ public class AudioPlayer {
                 @Override
                 public void run() {
                     if (isPollingPlayback) {
-                        Log.d(TAG, "Notifying playback listeners of playhead change.");
+//                        Log.d(TAG, "Notifying playback listeners of playhead change.");
                         for (Listener listener : listeners) {
                             listener.onPlayerPlaybackUpdate(
                                 playbackPosition(),

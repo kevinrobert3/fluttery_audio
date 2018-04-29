@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:fluttery_audio/src/_audio_player.dart';
 import 'package:fluttery_audio/fluttery_audio.dart';
-import 'package:meta/meta.dart';
+import 'package:fluttery_audio/src/_audio_player.dart';
 import 'package:logging/logging.dart';
+import 'package:meta/meta.dart';
 
 final _log = new Logger('AudioPlayerWidget');
 

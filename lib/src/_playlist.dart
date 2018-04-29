@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:fluttery_audio/src/_audio_player.dart';
 import 'package:fluttery_audio/src/_audio_player_widgets.dart';
+import 'package:logging/logging.dart';
+
+final _log = new Logger('AudioPlaylist');
 
 class AudioPlaylist extends StatefulWidget {
 
@@ -71,7 +74,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   @override
   Widget build(BuildContext context) {
-    print('Building with active index: $_activeAudioIndex');
+    _log.fine('Building with active index: $_activeAudioIndex');
     return new Audio(
       audioUrl: widget.playlist[_activeAudioIndex],
       playbackState: widget.playbackState,
@@ -81,7 +84,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
       playerCallback: (BuildContext context, AudioPlayer player) {
         if (_prevState != player.state) {
           if (player.state == AudioPlayerState.completed) {
-            print('Reached end of audio. Trying to play next clip.');
+            _log.fine('Reached end of audio. Trying to play next clip.');
             // Playback has completed. Go to next song.
             next();
           }

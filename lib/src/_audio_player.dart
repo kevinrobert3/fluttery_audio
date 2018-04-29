@@ -37,11 +37,11 @@ class AudioPlayer {
     _setState(AudioPlayerState.idle);
 
     channel.setMethodCallHandler((MethodCall call) {
-      print('Received channel message: ${call.method}');
+      _log.fine('Received channel message: ${call.method}');
       switch (call.method) {
         case "onFftVisualization":
-          print('FFT Visualization:');
-          print('${call.arguments['fft'].runtimeType}');
+          _log.fine('FFT Visualization:');
+          _log.fine('${call.arguments['fft'].runtimeType}');
           break;
         case "onAudioLoading":
           _log.fine('onAudioLoading');

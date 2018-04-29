@@ -76,7 +76,7 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
       @Override
       public void onPlayerPlaybackUpdate(int position, int audioLength) {
-        Log.d(TAG, "Android -> Flutter: onPlayerPlaybackUpdate()");
+//        Log.d(TAG, "Android -> Flutter: onPlayerPlaybackUpdate()");
         Map<String, Object> args = new HashMap<>();
         args.put("position", position);
         args.put("audioLength", audioLength);
@@ -201,7 +201,7 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-      Log.d(TAG, "Flutter -> Android: " + call.method);
+//      Log.d(TAG, "Flutter -> Android: " + call.method);
       try {
         AudioVisualizerPlayerCall playerCall = parseMethodName(call.method);
         Log.d(TAG, playerCall.toString());

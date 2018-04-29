@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:fluttery_audio/fluttery_audio.dart';
 import 'package:fluttery_audio/src/_audio_visualizer.dart';
+import 'package:logging/logging.dart';
+
+final _log = new Logger('Visualizer');
 
 class Visualizer extends StatefulWidget {
 
@@ -26,7 +29,7 @@ class _VisualizerState extends State<Visualizer> {
       ..activate()
       ..addListener(
           fftCallback: (List<int> samples) {
-            print('Got FFT samples: $samples');
+            _log.fine('Got FFT samples: $samples');
             setState(() => fft = samples);
           }
       );
