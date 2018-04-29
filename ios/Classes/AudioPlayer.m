@@ -74,6 +74,14 @@ const NSString* TAG = @"AudioPlayer";
     } else if (_isPlaybackDesired) {
       _isPlaying = TRUE;
       [self play];
+      
+      // Theoretically we shouldn't need these callbacks here because our call
+      // above to "play" should result in a callback about a rate change which would
+      // then emit these same callbacks. However, this is not occuring when testing
+      // the app so this is here as a stopgap fix until the root problem is found.
+      for (id<AudioPlayerListener> listener in [_listeners allObjects]) {
+        [listener onPlayerPlaying];
+      }
     } else {
       _isPlaying = FALSE;
       for (id<AudioPlayerListener> listener in [_listeners allObjects]) {
