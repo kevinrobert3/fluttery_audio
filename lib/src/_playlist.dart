@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttery_audio/src/_audio_player.dart';
 import 'package:fluttery_audio/src/_audio_player_widgets.dart';
 import 'package:logging/logging.dart';
+import 'package:meta/meta.dart';
 
 final _log = new Logger('AudioPlaylist');
 
@@ -81,6 +82,9 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
       callMe: [
         WatchableAudioProperties.audioPlayerState,
       ],
+      buildMe: [
+        WatchableAudioProperties.audioPlayerState,
+      ],
       playerCallback: (BuildContext context, AudioPlayer player) {
         if (_prevState != player.state) {
           if (player.state == AudioPlayerState.completed) {
@@ -95,12 +99,36 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
       playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
         _audioPlayer = player;
 
-        return widget.playlistBuilder != null
-            ? widget.playlistBuilder(context, this, widget.child)
-            : widget.child;
+        return new _InheritedPlaylist(
+          activeIndex: activeIndex,
+          child: widget.playlistBuilder != null
+              ? widget.playlistBuilder(context, this, widget.child)
+              : widget.child,
+        );
       },
     );
   }
+}
+
+class _InheritedPlaylist extends InheritedWidget {
+
+  static _InheritedPlaylist of(BuildContext context) {
+    return context.inheritFromWidgetOfExactType(_InheritedPlaylist) as _InheritedPlaylist;
+  }
+
+  final int activeIndex;
+  final Widget child;
+
+  _InheritedPlaylist({
+    @required this.activeIndex,
+    this.child,
+  }) : super(child: child);
+
+  @override
+  bool updateShouldNotify(_InheritedPlaylist oldWidget) {
+    return oldWidget.activeIndex != activeIndex;
+  }
+
 }
 
 class AudioPlaylistComponent extends StatefulWidget {
@@ -118,6 +146,13 @@ class AudioPlaylistComponent extends StatefulWidget {
 }
 
 class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _InheritedPlaylist.of(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return widget.playlistBuilder != null
